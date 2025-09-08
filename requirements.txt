@@ -11,6 +11,7 @@ stable-baselines3
 torch
 tensorboard
 optuna
+empyrical
 
 # Experiment Tracking and pipeline versioning
 mlflow
@@ -36,3 +37,5 @@ tqdm
 black
 isort
 black[jupyter]
+
+-e .

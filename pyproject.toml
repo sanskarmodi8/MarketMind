@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MarketMind"
+version = "0.0.0"
+description = "Autonomous trading bot powered by deep reinforcement learning."
+authors = [{ name = "Sanskar Modi", email = "sansyprog8@gmail.com" }]
+readme = "README.md"
+license = { text = "MIT License" }
+dependencies = []
+
+[project.urls]
+"Bug Tracker" = "https://github.com/sanskarmodi8/MarketMind/issues"
+
+[tool.isort]
+profile = "black"
