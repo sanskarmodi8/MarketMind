@@ -10,7 +10,8 @@ project_name = "MarketMind"
 list_of_files = [
     f"src/{project_name}/__init__.py",
     f"src/{project_name}/components/__init__.py",
-    f"src/{project_name}/components/data_loading.py",
+    f"src/{project_name}/components/data_ingestion.py",
+    f"src/{project_name}/components/data_preprocessing.py",
     f"src/{project_name}/components/model_training.py",
     f"src/{project_name}/components/model_evaluation.py",
     f"src/{project_name}/utils/__init__.py",
@@ -19,9 +20,10 @@ list_of_files = [
     f"src/{project_name}/config/configuration.py",
     f"src/{project_name}/pipeline/__init__.py",
     f"src/{project_name}/pipeline/prediction.py",
-    f"src/{project_name}/pipeline/stage_01_data_loading.py",
-    f"src/{project_name}/pipeline/stage_02_model_training.py",
-    f"src/{project_name}/pipeline/stage_03_model_evaluation.py",
+    f"src/{project_name}/pipeline/stage_01_data_ingestion.py",
+    f"src/{project_name}/pipeline/stage_02_data_preprocessing.py",
+    f"src/{project_name}/pipeline/stage_03_model_training.py",
+    f"src/{project_name}/pipeline/stage_04_model_evaluation.py",
     f"src/{project_name}/entity/__init__.py",
     f"src/{project_name}/entity/config_entity.py",
     f"src/{project_name}/constants/__init__.py",
@@ -32,11 +34,13 @@ list_of_files = [
     "pyproject.toml",
     "README.md",
     "dvc.yaml",
-    "notebooks/data_loading.ipynb",
+    "notebooks/data_ingestion.ipynb",
+    "notebooks/data_preprocessing.ipynb",
+    "notebooks/model_training.ipynb",
+    "notebooks/model_evaluation.ipynb",
     "streamlitApp.py",
     "fastapiApp.py",
     "Dockerfile",
-    "artifacts/data/data.csv"
 ]
 
 for filepath in list_of_files:
