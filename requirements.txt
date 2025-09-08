@@ -1,0 +1,38 @@
+# Data Handling
+numpy
+pandas
+matplotlib
+seaborn
+yfinance
+
+# Core libraries
+gymnasium
+stable-baselines3
+torch
+tensorboard
+optuna
+
+# Experiment Tracking and pipeline versioning
+mlflow
+dvc
+
+# User interface and backend
+streamlit
+fastapi
+uvicorn
+
+# Utils
+jupyter
+loguru
+notebook
+ipykernel
+python-box
+pyYAML
+ensure
+python-dotenv
+tqdm
+
+# code formatting
+black
+isort
+black[jupyter]
