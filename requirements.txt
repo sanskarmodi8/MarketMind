@@ -7,7 +7,8 @@ yfinance
 
 # Core libraries
 gymnasium
-stable-baselines3
+box2d
+stable-baselines3[extra]
 torch
 tensorboard
 optuna
