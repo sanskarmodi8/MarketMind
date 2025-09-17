@@ -23,4 +23,32 @@ stages:
       - config/config.yaml
       - artifacts/data_ingestion/data.csv
     outs:
-      - artifacts/data_preprocessing/preprocessed_data.csv
+      - artifacts/data_preprocessing/preprocessed_data/
+
+  model_training:
+  
+    cmd: python src/MarketMind/pipeline/stage_03_model_training.py
+    deps:
+      - src/MarketMind/pipeline/stage_03_model_training.py
+      - src/MarketMind/components/model_training.py
+      - config/config.yaml
+      - artifacts/data_preprocessing/preprocessed_data/train.csv
+    params:
+      - model_training.window_size
+      - model_training.transaction_cost
+      - model_training.initial_balance
+      - model_training.reward_scaling
+      - model_training.turnover_penalty
+      - model_training.net_arch
+      - model_training.initial_lr
+      - model_training.n_steps
+      - model_training.batch_size
+      - model_training.n_epochs
+      - model_training.gamma
+      - model_training.ent_coef
+      - model_training.eval_freq
+      - model_training.total_timesteps
+    outs:
+      - artifacts/model_training/model/
+      - artifacts/model_training/tb_logs/
+      - artifacts/model_training/vec_normalize.pkl

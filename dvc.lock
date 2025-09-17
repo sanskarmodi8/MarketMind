@@ -5,16 +5,16 @@ stages:
     deps:
     - path: config/config.yaml
       hash: md5
-      md5: d0406129fab795039e4b18f814b74bd6
-      size: 344
+      md5: bf8954f8db581a9918fce733624395f6
+      size: 1183
     - path: src/MarketMind/components/data_ingestion.py
       hash: md5
-      md5: 08c30a6ead9be996ad1201755d2ee28c
-      size: 1075
+      md5: d6bd0bb8f4eee0f9607d635480ef2b8f
+      size: 1182
     - path: src/MarketMind/pipeline/stage_01_data_ingestion.py
       hash: md5
-      md5: ab1e72c7bc7fbb2aafd120c6f42ab363
-      size: 863
+      md5: 2a7fddbe54c08421172e72c77e48af3a
+      size: 868
     params:
       params.yaml:
         data_ingestion.asset: BTC-USD
@@ -34,18 +34,71 @@ stages:
       size: 242966
     - path: config/config.yaml
       hash: md5
-      md5: d0406129fab795039e4b18f814b74bd6
-      size: 344
+      md5: bf8954f8db581a9918fce733624395f6
+      size: 1183
     - path: src/MarketMind/components/data_preprocessing.py
       hash: md5
-      md5: 78dd6ca271449684aa2616a03e802eaa
-      size: 1617
+      md5: c83e41720909cf510fbf0908b84cc5a6
+      size: 1853
     - path: src/MarketMind/pipeline/stage_02_data_preprocessing.py
       hash: md5
-      md5: 92e3cc216b8b45632f923b029421c99e
-      size: 813
+      md5: 9e2b3471b3d0ab159b2efe22db2945c7
+      size: 812
     outs:
-    - path: artifacts/data_preprocessing/preprocessed_data.csv
+    - path: artifacts/data_preprocessing/preprocessed_data/
       hash: md5
-      md5: d42760dab8ccec66f81d0eddd586d1f1
-      size: 623194
+      md5: 61a69d3aad74730c3f794c2d29822965.dir
+      size: 623313
+      nfiles: 2
+  model_training:
+    cmd: python src/MarketMind/pipeline/stage_03_model_training.py
+    deps:
+    - path: artifacts/data_preprocessing/preprocessed_data/train.csv
+      hash: md5
+      md5: 08c38e051a6f24a89d3966b5d1ecdd40
+      size: 501746
+    - path: config/config.yaml
+      hash: md5
+      md5: bf8954f8db581a9918fce733624395f6
+      size: 1183
+    - path: src/MarketMind/components/model_training.py
+      hash: md5
+      md5: 1bc127c880710130e4fd2a8ebe931dbd
+      size: 8854
+    - path: src/MarketMind/pipeline/stage_03_model_training.py
+      hash: md5
+      md5: b78680009e44da3107fdd109728f25c5
+      size: 812
+    params:
+      params.yaml:
+        model_training.batch_size: 128
+        model_training.ent_coef: 0.01
+        model_training.eval_freq: 5000
+        model_training.gamma: 0.999
+        model_training.initial_balance: 1.0
+        model_training.initial_lr: 0.0003
+        model_training.n_epochs: 15
+        model_training.n_steps: 4096
+        model_training.net_arch:
+        - 256
+        - 256
+        model_training.reward_scaling: 1.0
+        model_training.total_timesteps: 5000000
+        model_training.transaction_cost: 0.001
+        model_training.turnover_penalty: 0.0005
+        model_training.window_size: 100
+    outs:
+    - path: artifacts/model_training/model/
+      hash: md5
+      md5: 637caecd54f53b53898863a88a9802ef.dir
+      size: 6058095
+      nfiles: 2
+    - path: artifacts/model_training/tb_logs/
+      hash: md5
+      md5: 391ce2670bb5d62ae3304a1ab8b588f9.dir
+      size: 819973
+      nfiles: 1
+    - path: artifacts/model_training/vec_normalize.pkl
+      hash: md5
+      md5: d2e0f72c799817b0e3b6897cb2fba6b7
+      size: 22362

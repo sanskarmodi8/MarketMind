@@ -1,5 +1,6 @@
-from loguru import logger
 import os
+
+from loguru import logger
 
 # Make sure logs directory exists
 if not os.path.exists("logs"):

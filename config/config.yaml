@@ -9,4 +9,21 @@ data_ingestion:
 data_preprocessing:
   root_dir: artifacts/data_preprocessing
   data_path: artifacts/data_ingestion/data.csv
-  preprocessed_data_path: artifacts/data_preprocessing/preprocessed_data.csv
+  preprocessed_data_dir: artifacts/data_preprocessing/preprocessed_data/
+  preprocessed_train_data_path: artifacts/data_preprocessing/preprocessed_data/train.csv
+  preprocessed_test_data_path: artifacts/data_preprocessing/preprocessed_data/test.csv
+
+model_training:   
+  root_dir: artifacts/model_training
+  preprocessed_train_data_path: artifacts/data_preprocessing/preprocessed_data/train.csv
+  model_dir: artifacts/model_training/model/
+  tb_log_dir: artifacts/model_training/tb_logs/
+  normalized_vec_env_path : artifacts/model_training/vec_normalize.pkl
+
+model_evaluation:
+  root_dir: artifacts/model_evaluation
+  preprocessed_test_data_path: artifacts/data_preprocessing/preprocessed_data/test.csv
+  model_dir: artifacts/model_training/model/
+  normalized_vec_env_path : artifacts/model_training/vec_normalize.pkl
+  report_dir: artifacts/model_evaluation/report/
+  plots_dir: artifacts/model_evaluation/plots/
