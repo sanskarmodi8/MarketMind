@@ -1,0 +1,7 @@
+# basic config for all stages
+
+artifacts_root: artifacts/
+
+data_ingestion:
+  root_dir: artifacts/data_ingestion
+  data_path: artifacts/data_ingestion/data.csv

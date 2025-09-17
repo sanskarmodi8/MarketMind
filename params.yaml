@@ -1,0 +1,6 @@
+# parameters used across the pipeline
+
+data_ingestion:
+  asset: "BTC-USD"
+  start_date: "2017-01-01"
+  end_date: "2025-01-01"

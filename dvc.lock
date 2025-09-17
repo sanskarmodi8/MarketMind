@@ -1,0 +1,27 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/MarketMind/pipeline/stage_01_data_ingestion.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: 60c9c359b47fcf8bf1263cc812a636b8
+      size: 158
+    - path: src/MarketMind/components/data_ingestion.py
+      hash: md5
+      md5: 08c30a6ead9be996ad1201755d2ee28c
+      size: 1075
+    - path: src/MarketMind/pipeline/stage_01_data_ingestion.py
+      hash: md5
+      md5: ab1e72c7bc7fbb2aafd120c6f42ab363
+      size: 863
+    params:
+      params.yaml:
+        data_ingestion.asset: BTC-USD
+        data_ingestion.end_date: '2025-01-01'
+        data_ingestion.start_date: '2017-01-01'
+    outs:
+    - path: artifacts/data_ingestion/data.csv
+      hash: md5
+      md5: 32366198ba1d37ea6bf7da655895a5c1
+      size: 242966
