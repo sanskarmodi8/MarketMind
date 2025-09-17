@@ -5,8 +5,8 @@ stages:
     deps:
     - path: config/config.yaml
       hash: md5
-      md5: 60c9c359b47fcf8bf1263cc812a636b8
-      size: 158
+      md5: d0406129fab795039e4b18f814b74bd6
+      size: 344
     - path: src/MarketMind/components/data_ingestion.py
       hash: md5
       md5: 08c30a6ead9be996ad1201755d2ee28c
@@ -25,3 +25,27 @@ stages:
       hash: md5
       md5: 32366198ba1d37ea6bf7da655895a5c1
       size: 242966
+  data_preprocessing:
+    cmd: python src/MarketMind/pipeline/stage_02_data_preprocessing.py
+    deps:
+    - path: artifacts/data_ingestion/data.csv
+      hash: md5
+      md5: 32366198ba1d37ea6bf7da655895a5c1
+      size: 242966
+    - path: config/config.yaml
+      hash: md5
+      md5: d0406129fab795039e4b18f814b74bd6
+      size: 344
+    - path: src/MarketMind/components/data_preprocessing.py
+      hash: md5
+      md5: 78dd6ca271449684aa2616a03e802eaa
+      size: 1617
+    - path: src/MarketMind/pipeline/stage_02_data_preprocessing.py
+      hash: md5
+      md5: 92e3cc216b8b45632f923b029421c99e
+      size: 813
+    outs:
+    - path: artifacts/data_preprocessing/preprocessed_data.csv
+      hash: md5
+      md5: d42760dab8ccec66f81d0eddd586d1f1
+      size: 623194

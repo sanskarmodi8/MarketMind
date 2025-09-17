@@ -10,3 +10,9 @@ class DataIngestionConfig:
     asset: str
     start_date: str
     end_date: str
+
+@dataclass(frozen=True)
+class DataPreprocessingConfig:
+    root_dir: Path
+    data_path: Path
+    preprocessed_data_path: Path

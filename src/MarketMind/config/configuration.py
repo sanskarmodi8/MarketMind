@@ -1,4 +1,4 @@
-from MarketMind.entity.config_entity import DataIngestionConfig
+from MarketMind.entity.config_entity import DataIngestionConfig, DataPreprocessingConfig
 from MarketMind.constants import *
 from MarketMind.utils.common import create_directories, read_yaml
 
@@ -12,6 +12,7 @@ class ConfigurationManager:
         create_directories([self.config.artifacts_root])
 
     def get_data_ingestion_config(self):
+        # prepare config for data ingestion
         config = self.config.data_ingestion
         params = self.params.data_ingestion
         create_directories([config.root_dir])
@@ -21,4 +22,14 @@ class ConfigurationManager:
             asset=params.asset,
             start_date=params.start_date,
             end_date=params.end_date
+        )
+
+    def get_data_preprocessing_config(self):
+        # prepare config for data preprocessing
+        config = self.config.data_preprocessing
+        create_directories([config.root_dir])
+        return DataPreprocessingConfig(
+            root_dir=config.root_dir,
+            data_path=config.data_path,
+            preprocessed_data_path=config.preprocessed_data_path
         )

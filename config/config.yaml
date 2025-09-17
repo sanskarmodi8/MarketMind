@@ -5,3 +5,8 @@ artifacts_root: artifacts/
 data_ingestion:
   root_dir: artifacts/data_ingestion
   data_path: artifacts/data_ingestion/data.csv
+
+data_preprocessing:
+  root_dir: artifacts/data_preprocessing
+  data_path: artifacts/data_ingestion/data.csv
+  preprocessed_data_path: artifacts/data_preprocessing/preprocessed_data.csv
