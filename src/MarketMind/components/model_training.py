@@ -13,6 +13,9 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 from MarketMind import logger
 from MarketMind.entity.config_entity import ModelTrainingConfig
 
+# -------------------------
+# Reproducibility
+# -------------------------
 SEED = 42
 np.random.seed(SEED)
 random.seed(SEED)
@@ -20,6 +23,9 @@ torch.manual_seed(SEED)
 os.environ["PYTHONHASHSEED"] = str(SEED)
 
 
+# =========================
+# Trading Environment
+# =========================
 class TradingEnv(gym.Env):
     """
     Long-only Trading Environment.
@@ -74,7 +80,7 @@ class TradingEnv(gym.Env):
 
         self.reset()
 
-    def reset(self, seed=None):
+    def reset(self, seed=None, options=None):
         if seed is not None:
             np.random.seed(seed)
 
@@ -117,7 +123,7 @@ class TradingEnv(gym.Env):
         price_next = float(self.df["Close"].iloc[self.current_step + 1])
         prev_position = self.position
 
-        # --- Action Handling ---
+        # Action Handling
         if action == 1 and self.position == 0:  # Buy
             trade_notional = self.cash
             cost = self.transaction_cost * trade_notional
@@ -139,17 +145,15 @@ class TradingEnv(gym.Env):
             self.position = 0
             self.trades.append((self.current_step, "SELL", price_now, self.cash))
 
-        # Update portfolio value at next price
+        # Portfolio value update
         if self.position == 1:
             asset_value_next = self.invested * (price_next / self.entry_price)
             self.portfolio_value = asset_value_next
         else:
             self.portfolio_value = self.cash
 
-        # --- Reward ---
-        # log-return of portfolio value (more stable)
+        # Reward
         reward = np.log(self.portfolio_value / max(prev_portfolio_value, 1e-9))
-        # small penalty for changing position (reduces churn)
         turnover = abs(self.position - prev_position)
         reward -= self.turnover_penalty * turnover
         reward *= self.reward_scaling
@@ -172,6 +176,9 @@ class TradingEnv(gym.Env):
         pass
 
 
+# =========================
+# Model Training
+# =========================
 class ModelTraining:
     """
     Class to handle model training using PPO algorithm from Stable Baselines3.
@@ -181,22 +188,13 @@ class ModelTraining:
         self.config = config
 
     def run(self):
-        """
-        Trains a PPO agent on the trading environment using the provided configuration.
-        Saves the best model and the normalized vectorized environment.
-        1. Loads preprocessed training data.
-        2. Initializes training and evaluation environments.
-        3. Configures and trains the PPO model with evaluation callbacks.
-        4. Saves the trained model and environment normalization parameters.
-        """
-
         logger.info("Loading preprocessed training data...")
         df = pd.read_csv(
             self.config.preprocessed_train_data_path, index_col=0, parse_dates=True
         ).sort_index()
 
         logger.info("Initializing training and evaluation environments...")
-        env = DummyVecEnv(
+        train_env = DummyVecEnv(
             [
                 lambda: TradingEnv(
                     df,
@@ -223,20 +221,25 @@ class ModelTraining:
             ]
         )
 
-        vec_env = VecNormalize(env, norm_obs=True, norm_reward=False, clip_obs=10.0)
+        vec_env = VecNormalize(
+            train_env, norm_obs=True, norm_reward=False, clip_obs=10.0
+        )
         vec_eval_env = VecNormalize(
             eval_env, norm_obs=True, norm_reward=False, clip_obs=10.0
         )
         vec_eval_env.training = False
         vec_eval_env.norm_reward = False
 
-        logger.info("Configuring and training the PPO model...")
+        logger.info("Configuring PPO model...")
         policy_kwargs = dict(net_arch=self.config.net_arch, activation_fn=torch.nn.ReLU)
+
+        # Learning rate schedule: p starts at 1 → decays to 0
+        lr_schedule = lambda p: self.config.initial_lr * p
 
         model = PPO(
             policy="MlpPolicy",
             env=vec_env,
-            learning_rate=lambda p: p * self.config.initial_lr,
+            learning_rate=lr_schedule,
             n_steps=self.config.n_steps,
             batch_size=self.config.batch_size,
             n_epochs=self.config.n_epochs,
@@ -256,13 +259,13 @@ class ModelTraining:
             render=False,
         )
 
+        logger.info("Starting training...")
         model.learn(
             total_timesteps=self.config.total_timesteps,
             callback=eval_callback,
             tb_log_name="PPO",
         )
 
-        logger.info(
-            "Training completed and best model saved. Saving the VecNormalize object..."
-        )
+        logger.info("Training complete. Saving VecNormalize...")
         vec_env.save(self.config.normalized_vec_env_path)
+        logger.info("Done ")

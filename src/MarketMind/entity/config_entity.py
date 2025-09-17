@@ -45,13 +45,14 @@ class ModelTrainingConfig:
     eval_freq: int
     total_timesteps: int
 
+
 @dataclass(frozen=True)
 class ModelEvaluationConfig:
     root_dir: Path
     preprocessed_test_data_path: Path
     model_dir: Path
     normalized_vec_env_path: Path
-    reports_dir: Path
+    report_dir: Path
     plots_dir: Path
     window_size: int
     transaction_cost: float

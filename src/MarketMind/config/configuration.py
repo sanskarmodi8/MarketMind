@@ -2,8 +2,8 @@ from MarketMind.constants import *
 from MarketMind.entity.config_entity import (
     DataIngestionConfig,
     DataPreprocessingConfig,
+    ModelEvaluationConfig,
     ModelTrainingConfig,
-    ModelEvaluationConfig
 )
 from MarketMind.utils.common import create_directories, read_yaml
 
@@ -70,18 +70,18 @@ class ConfigurationManager:
             eval_freq=params.eval_freq,
             total_timesteps=params.total_timesteps,
         )
-    
+
     def get_model_evaluation_config(self):
         # prepare config for model evaluation
         config = self.config.model_evaluation
         params = self.params.model_training
-        create_directories([config.root_dir, config.reports_dir, config.plots_dir])
+        create_directories([config.root_dir, config.report_dir, config.plots_dir])
         return ModelEvaluationConfig(
             root_dir=config.root_dir,
             preprocessed_test_data_path=config.preprocessed_test_data_path,
             model_dir=config.model_dir,
             normalized_vec_env_path=config.normalized_vec_env_path,
-            reports_dir=config.reports_dir,
+            report_dir=config.report_dir,
             plots_dir=config.plots_dir,
             window_size=params.window_size,
             transaction_cost=params.transaction_cost,
