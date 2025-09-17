@@ -4,6 +4,7 @@ pandas
 matplotlib
 seaborn
 yfinance
+plotly
 
 # Core libraries
 gymnasium
