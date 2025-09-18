@@ -1,9 +1,11 @@
 # MarketMind
+
 Autonomous trading bot powered by deep reinforcement learning.
 
-todo:
-[] online learning
-[] fastapi app
-[] dockerfile
-[] readme
-[] deployment
+## Roadmap / To-Do
+
+- [ ] Implement online learning  
+- [ ] Build FastAPI application  
+- [ ] Create Dockerfile  
+- [ ] Write comprehensive README  
+- [ ] Set up deployment pipeline
