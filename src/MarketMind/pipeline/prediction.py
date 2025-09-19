@@ -15,13 +15,18 @@ from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 from MarketMind import logger
 from MarketMind.components.model_training import TradingEnv as TradingEnvPredict
+from MarketMind.config.configuration import ConfigurationManager
+
+# load configs
+preprocessing_config = ConfigurationManager().get_data_preprocessing_config()
+training_config = ConfigurationManager().get_model_training_config()
 
 # constants
 LOCAL_MLFLOW_ARTIFACT_DIR = Path("artifacts") / "mlflow_runs"
 LOCAL_MLFLOW_ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
 DEFAULT_MLFLOW_TRACKING_URI = "https://dagshub.com/sanskarmodi8/MarketMind.mlflow"
 EXPERIMENT_NAME = "MarketMind_Model_Evaluation"
-TRAINING_WINDOW_SIZE = 100  # must match training config
+TRAINING_WINDOW_SIZE = training_config.window_size
 
 
 class PredictionPipeline:
@@ -216,13 +221,19 @@ class PredictionPipeline:
         try:
             df = df.copy()
             df["log_return"] = np.log(df["Close"] / df["Close"].shift(1))
-            df["SMA_short"] = df["Close"].rolling(window=20).mean()
-            df["SMA_long"] = df["Close"].rolling(window=50).mean()
-            df["volatility"] = df["log_return"].rolling(window=20).std()
+            df["SMA_short"] = (
+                df["Close"].rolling(window=preprocessing_config.sma_short_window).mean()
+            )
+            df["SMA_long"] = (
+                df["Close"].rolling(window=preprocessing_config.sma_long_window).mean()
+            )
+            df["volatility"] = (
+                df["log_return"].rolling(preprocessing_config.volatility_window).std()
+            )
             df["open_close_ratio"] = df["Open"] / df["Close"]
             df["high_low_range"] = (df["High"] - df["Low"]) / df["Close"]
-            vol_mean = df["Volume"].rolling(20).mean()
-            vol_std = df["Volume"].rolling(20).std()
+            vol_mean = df["Volume"].rolling(preprocessing_config.volume_window).mean()
+            vol_std = df["Volume"].rolling(preprocessing_config.volume_window).std()
             df["volume_zscore"] = (df["Volume"] - vol_mean) / (vol_std + 1e-9)
             df.dropna(inplace=True)
             return df

@@ -7,6 +7,10 @@ data_ingestion:
 
 data_preprocessing:
   train_size: 0.8
+  sma_short_window: 20
+  sma_long_window: 50
+  volatility_window: 20
+  volume_window: 20
 
 model_training:
   window_size: 100

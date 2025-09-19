@@ -11,6 +11,8 @@ import plotly.graph_objects as go
 import streamlit as st
 import yfinance as yf
 
+from MarketMind.config.configuration import ConfigurationManager
+
 warnings.filterwarnings("ignore")
 
 # Add the src directory to the Python path
@@ -538,8 +540,14 @@ def main():
     st.sidebar.markdown("### ⚙️ Settings")
     data_period = st.sidebar.selectbox(
         "Historical data period:",
-        ["180d", "1y", "2y"],
-        index=0,  # Default to 180d for better reliability
+        [
+            str(ConfigurationManager().get_model_training_config().window_size + 50)
+            + "d",
+            "180d",
+            "1y",
+            "2y",
+        ],
+        index=0,
         help="Select the time period for historical data analysis",
     )
 

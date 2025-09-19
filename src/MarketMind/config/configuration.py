@@ -44,6 +44,10 @@ class ConfigurationManager:
             preprocessed_train_data_path=config.preprocessed_train_data_path,
             preprocessed_test_data_path=config.preprocessed_test_data_path,
             train_size=params.train_size,
+            sma_short_window=params.sma_short_window,
+            sma_long_window=params.sma_long_window,
+            volatility_window=params.volatility_window,
+            volume_window=params.volume_window,
         )
 
     def get_model_training_config(self):

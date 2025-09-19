@@ -21,6 +21,10 @@ class DataPreprocessingConfig:
     preprocessed_train_data_path: Path
     preprocessed_test_data_path: Path
     train_size: float
+    sma_short_window: int
+    sma_long_window: int
+    volatility_window: int
+    volume_window: int
 
 
 @dataclass(frozen=True)
