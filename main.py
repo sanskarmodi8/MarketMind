@@ -1,8 +1,12 @@
+from dotenv import load_dotenv
+
 from MarketMind import logger
 from MarketMind.pipeline.stage_01_data_ingestion import DataIngestionPipeline
 from MarketMind.pipeline.stage_02_data_preprocessing import DataPreprocessingPipeline
 from MarketMind.pipeline.stage_03_model_training import ModelTrainingPipeline
 from MarketMind.pipeline.stage_04_model_evaluation import ModelEvaluationPipeline
+
+load_dotenv()  # take environment variables from .env for mlflow.
 
 # runs all the stages of the pipeline
 # to run a specific stage, run the corresponding stage file

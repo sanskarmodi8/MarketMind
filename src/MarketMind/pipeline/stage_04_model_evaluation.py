@@ -1,5 +1,8 @@
 from MarketMind import logger
-from MarketMind.components.model_evaluation import ModelEvaluation
+from MarketMind.components.model_evaluation import (
+    ModelEvaluation,
+    ModelEvaluationMLFLOW,
+)
 from MarketMind.config.configuration import ConfigurationManager
 
 STAGE_NAME = "MODEL_EVALUATION"
@@ -12,7 +15,8 @@ class ModelEvaluationPipeline:
 
     def __init__(self):
         self.config = ConfigurationManager().get_model_evaluation_config()
-        self.model_evaluation = ModelEvaluation(config=self.config)
+        # self.model_evaluation = ModelEvaluation(config=self.config)
+        self.model_evaluation = ModelEvaluationMLFLOW(config=self.config)
 
     def run(self):
         self.model_evaluation.run()

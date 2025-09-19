@@ -9,3 +9,5 @@ Autonomous trading bot powered by deep reinforcement learning.
 - [ ] Create Dockerfile  
 - [ ] Write comprehensive README  
 - [ ] Set up deployment pipeline
+- [ ] Add support for other symbols
+- [ ] Improve design pattern
