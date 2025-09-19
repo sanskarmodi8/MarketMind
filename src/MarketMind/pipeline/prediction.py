@@ -196,7 +196,6 @@ class PredictionPipeline:
         try:
             logger.info(f"Fetching {days} days of data for {symbol} ...")
             ticker = yf.Ticker(symbol)
-            # period accepts strings like '180d' or '1y'; if int provided treat as days
             if isinstance(days, int):
                 period = f"{days}d"
             else:
