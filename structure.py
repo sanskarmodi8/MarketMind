@@ -37,9 +37,7 @@ list_of_files = [
     "notebooks/data_ingestion.ipynb",
     "notebooks/data_preprocessing.ipynb",
     "notebooks/model_train_eval.ipynb",
-    "streamlitApp.py",
-    "fastapiApp.py",
-    "Dockerfile",
+    "app.py",
 ]
 
 for filepath in list_of_files:

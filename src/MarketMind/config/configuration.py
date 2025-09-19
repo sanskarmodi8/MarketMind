@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from MarketMind.constants import *
 from MarketMind.entity.config_entity import (
     DataIngestionConfig,
@@ -27,7 +29,7 @@ class ConfigurationManager:
             data_path=config.data_path,
             asset=params.asset,
             start_date=params.start_date,
-            end_date=params.end_date,
+            end_date=datetime.today().strftime("%Y-%m-%d") or params.end_date,
         )
 
     def get_data_preprocessing_config(self):

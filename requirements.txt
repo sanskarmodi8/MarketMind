@@ -39,5 +39,3 @@ tqdm
 black
 isort
 black[jupyter]
-
--e .
