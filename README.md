@@ -4,6 +4,8 @@
 
 ![MarketMind Logo](https://img.shields.io/badge/MarketMind-AI%20Trading%20Bot-purple?style=for-the-badge&logo=bitcoin&logoColor=white)
 
+[Live App](https://marketmind-sanskarmodi.streamlit.app/)
+
 **Autonomous Bitcoin Trading Bot Powered by Deep Reinforcement Learning**
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg?style=flat&logo=python&logoColor=white)](https://python.org)
