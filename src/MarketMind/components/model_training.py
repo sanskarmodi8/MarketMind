@@ -248,6 +248,7 @@ class ModelTraining:
             verbose=1,
             policy_kwargs=policy_kwargs,
             tensorboard_log=self.config.tb_log_dir,
+            device="cpu",
         )
 
         eval_callback = EvalCallback(

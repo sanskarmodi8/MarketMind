@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -16,6 +17,7 @@ class DataIngestion:
 
     def __init__(self, config: DataIngestionConfig):
         self.config = config
+        end_date = datetime.today().strftime("%Y-%m-%d") or self.config.end_date
 
     def run(self) -> pd.DataFrame:
         """
@@ -32,8 +34,6 @@ class DataIngestion:
                 self.config.asset,
                 start=self.config.start_date,
                 end=self.config.end_date,
-                progress=False,
-                auto_adjust=False,  # keep raw OHLC for indicators
             )
         except Exception as e:
             logger.error(f"Error downloading data for {self.config.asset}: {e}")
@@ -46,16 +46,11 @@ class DataIngestion:
             )
             return pd.DataFrame()
 
-        # Handle MultiIndex columns (some tickers return multi-level)
-        if isinstance(data.columns, pd.MultiIndex):
-            data.columns = data.columns.droplevel(1)
-
-        # Ensure output directory exists
-        data_path = Path(self.config.data_path)
-        os.makedirs(data_path.parent, exist_ok=True)
+        # Handle MultiIndex columns
+        data.columns = data.columns.droplevel(1)
 
         # Save to CSV
-        data.to_csv(data_path, index=True)
-        logger.info(f"Data downloaded and saved to {data_path}")
+        data.to_csv(self.config.data_path, index=True)
+        logger.info(f"Data downloaded and saved to {self.config.data_path}")
 
         return data

@@ -1,4 +1,4 @@
-import os
+import pickle
 import warnings
 from pathlib import Path
 from typing import Dict, Optional
@@ -43,16 +43,10 @@ class PredictionPipeline:
             "volume_zscore",
         ]
 
-        # Load .env and set mlflow tracking uri (env var MLFLOW_TRACKING_URI optional)
+        # Load .env and set mlflow tracking uri
         load_dotenv()
-        tracking_uri = os.getenv("MLFLOW_TRACKING_URI", DEFAULT_MLFLOW_TRACKING_URI)
-        try:
-            mlflow.set_tracking_uri(tracking_uri)
-        except Exception:
-            # set_tracking_uri can raise if invalid; still proceed and log
-            logger.warning(
-                f"Could not set mlflow tracking uri to {tracking_uri} (continuing)."
-            )
+        tracking_uri = DEFAULT_MLFLOW_TRACKING_URI
+        mlflow.set_tracking_uri(tracking_uri)
         logger.info(f"MLflow tracking URI set to: {tracking_uri}")
 
     def _latest_run_artifact_paths(
@@ -166,51 +160,29 @@ class PredictionPipeline:
                 logger.error("Could not find model or vecnormalize artifact.")
                 return False
 
-            # create dummy env matching training env (window size) to load VecNormalize
-            dummy_rows = max(200, TRAINING_WINDOW_SIZE * 2)
-            dummy_df = pd.DataFrame(
-                {
-                    "Close": [100.0] * dummy_rows,
-                    **{col: [0.0] * dummy_rows for col in self.feature_cols},
-                }
-            )
-            dummy_env = DummyVecEnv(
-                [
-                    lambda: TradingEnvPredict(
-                        dummy_df, self.feature_cols, window_size=TRAINING_WINDOW_SIZE
-                    )
-                ]
-            )
-
             logger.info(f"Loading PPO model from {model_path} ...")
             self.model = PPO.load(str(model_path))
             logger.info("Model loaded. Loading VecNormalize...")
-
-            self.vec_normalize = VecNormalize.load(str(vecnormalize_path), dummy_env)
-            self.vec_normalize.training = False
-            self.vec_normalize.norm_reward = False
-
+            self.vec_normalize = pickle.load(open(vecnormalize_path, "rb"))
             logger.info("Model and VecNormalize loaded successfully.")
             return True
+
         except Exception as e:
             logger.error(f"Failed to load model/vecnormalize: {e}")
             return False
 
     def fetch_live_data(self, symbol: str, days: int = 365) -> Optional[pd.DataFrame]:
-        """Fetch live data from Yahoo (simple wrapper)."""
+        """Fetch live data from Yahoo."""
         try:
             logger.info(f"Fetching {days} days of data for {symbol} ...")
             ticker = yf.Ticker(symbol)
-            if isinstance(days, int):
-                period = f"{days}d"
-            else:
-                period = str(days)
-            data = ticker.history(period=period)
+            data = ticker.history(
+                period=str(days + preprocessing_config.sma_long_window) + "d"
+            )
+            print(len(data))
             if data is None or data.empty:
                 logger.warning("No data returned from yf")
                 return None
-            if isinstance(data.columns, pd.MultiIndex):
-                data.columns = data.columns.droplevel(1)
             return data
         except Exception as e:
             logger.error(f"Error fetching data for {symbol}: {e}")
@@ -220,6 +192,9 @@ class PredictionPipeline:
         """Create features copy of your preprocessing pipeline (safe and idempotent)."""
         try:
             df = df.copy()
+            df = df.asfreq("B")
+            df = df.ffill()
+            print(len(df))
             df["log_return"] = np.log(df["Close"] / df["Close"].shift(1))
             df["SMA_short"] = (
                 df["Close"].rolling(window=preprocessing_config.sma_short_window).mean()
@@ -234,8 +209,9 @@ class PredictionPipeline:
             df["high_low_range"] = (df["High"] - df["Low"]) / df["Close"]
             vol_mean = df["Volume"].rolling(preprocessing_config.volume_window).mean()
             vol_std = df["Volume"].rolling(preprocessing_config.volume_window).std()
-            df["volume_zscore"] = (df["Volume"] - vol_mean) / (vol_std + 1e-9)
+            df["volume_zscore"] = (df["Volume"] - vol_mean) / (vol_std)
             df.dropna(inplace=True)
+            print(len(df))
             return df
         except Exception as e:
             logger.error(f"Preprocessing error: {e}")
@@ -336,5 +312,5 @@ class PredictionPipeline:
             return {"success": False, "error": str(e), "symbol": symbol}
 
 
-# singleton instance (safe to import)
+# singleton instance
 prediction_pipeline = PredictionPipeline()

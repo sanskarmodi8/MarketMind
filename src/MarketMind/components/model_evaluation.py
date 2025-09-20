@@ -15,158 +15,11 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.vec_env import DummyVecEnv, VecNormalize
 
 from MarketMind import logger
+from MarketMind.components.model_training import TradingEnv
 from MarketMind.entity.config_entity import ModelEvaluationConfig
 from MarketMind.utils.common import save_json
 
 load_dotenv()  # load env vars for mlflow
-
-
-# ========================================
-# Trading Environment
-# ========================================
-class TradingEnv(gym.Env):
-    """
-    Long-only Trading Environment.
-    Actions:
-        0 = Hold
-        1 = Buy (go long)
-        2 = Sell (close position)
-    """
-
-    def __init__(
-        self,
-        df,
-        feature_cols=None,
-        window_size=100,
-        transaction_cost=0.001,
-        initial_balance=1.0,
-        reward_scaling=1.0,
-        deterministic=True,
-        turnover_penalty=0.0005,
-    ):
-        super().__init__()
-        self.df = df.copy()
-        self.feature_cols = feature_cols or [
-            "log_return",
-            "SMA_short",
-            "SMA_long",
-            "volatility",
-            "open_close_ratio",
-            "high_low_range",
-            "volume_zscore",
-        ]
-        self.window_size = window_size
-        self.transaction_cost = transaction_cost
-        self.initial_balance = initial_balance
-        self.reward_scaling = reward_scaling
-        self.deterministic = deterministic
-        self.turnover_penalty = turnover_penalty
-
-        self.start_index = self.window_size
-        self.end_index = len(self.df) - 1
-
-        self.action_space = spaces.Discrete(3)
-        self.n_features = len(self.feature_cols)
-        obs_len = self.window_size * self.n_features + 1
-        self.observation_space = spaces.Box(
-            low=-np.inf, high=np.inf, shape=(obs_len,), dtype=np.float32
-        )
-
-        self.reset()
-
-    def reset(self, seed=None):
-        if seed is not None:
-            np.random.seed(seed)
-
-        self.current_step = (
-            self.start_index
-            if self.deterministic
-            else np.random.randint(self.start_index, self.end_index - 1)
-        )
-        self.position = 0
-        self.cash = self.initial_balance
-        self.invested = 0.0
-        self.entry_price = 0.0
-        self.portfolio_value = self.cash
-        self.trades = []
-
-        return self._get_obs(), {}
-
-    def _get_obs(self):
-        start = self.current_step - self.window_size + 1
-        end = self.current_step + 1
-        window = self.df.iloc[start:end][self.feature_cols].values
-
-        mean = window.mean(axis=0)
-        std = window.std(axis=0) + 1e-9
-        norm_window = (window - mean) / std
-
-        obs = np.concatenate(
-            [norm_window.flatten(), np.array([self.position], dtype=np.float32)]
-        )
-        return obs.astype(np.float32)
-
-    def step(self, action):
-        assert self.action_space.contains(action)
-        done = False
-        info = {}
-
-        prev_portfolio_value = self.portfolio_value
-        price_now = float(self.df["Close"].iloc[self.current_step])
-        price_next = float(self.df["Close"].iloc[self.current_step + 1])
-        prev_position = self.position
-
-        # Action logic
-        if action == 1 and self.position == 0:  # Buy
-            trade_notional = self.cash
-            cost = self.transaction_cost * trade_notional
-            self.invested = self.cash - cost
-            self.entry_price = price_now
-            self.position = 1
-            self.cash = 0.0
-            self.trades.append(
-                (self.current_step, "BUY", price_now, self.portfolio_value)
-            )
-
-        elif action == 2 and self.position == 1:  # Sell
-            current_value = self.invested * (price_now / self.entry_price)
-            trade_notional = current_value
-            cost = self.transaction_cost * trade_notional
-            self.cash = current_value - cost
-            self.invested = 0.0
-            self.entry_price = 0.0
-            self.position = 0
-            self.trades.append((self.current_step, "SELL", price_now, self.cash))
-
-        # Update portfolio value at next price
-        if self.position == 1:
-            asset_value_next = self.invested * (price_next / self.entry_price)
-            self.portfolio_value = asset_value_next
-        else:
-            self.portfolio_value = self.cash
-
-        # Reward
-        reward = np.log(self.portfolio_value / max(prev_portfolio_value, 1e-9))
-        turnover = abs(self.position - prev_position)
-        reward -= self.turnover_penalty * turnover
-        reward *= self.reward_scaling
-
-        self.current_step += 1
-        if self.current_step >= self.end_index:
-            done = True
-
-        obs = self._get_obs()
-        return obs, float(reward), done, False, info
-
-    def render(self, mode="human"):
-        print(
-            f"Step {self.current_step}, Pos {self.position}, "
-            f"Cash {self.cash:.4f}, Invested {self.invested:.4f}, "
-            f"Portfolio {self.portfolio_value:.4f}"
-        )
-
-    def close(self):
-        pass
 
 
 # ========================================
@@ -569,7 +422,7 @@ class ModelEvaluationMLFLOW:
         logger.info("Reading preprocessed test data...")
         df = pd.read_csv(
             self.config.preprocessed_test_data_path, index_col=0, parse_dates=True
-        )
+        ).sort_index()
 
         # Start MLflow experiment
         mlflow.set_tracking_uri(os.getenv("MLFLOW_TRACKING_URI"))
@@ -622,7 +475,7 @@ class ModelEvaluationMLFLOW:
             )
 
             # Save VecNormalize as artifact
-            vecnorm_file = os.path.join(self.config.model_dir, "vecnormalize.pkl")
+            vecnorm_file = os.path.join(self.config.root_dir, "vecnormalize.pkl")
             with open(vecnorm_file, "wb") as f:
                 pickle.dump(vec_normalize, f)
             mlflow.log_artifact(vecnorm_file, artifact_path="artifacts")

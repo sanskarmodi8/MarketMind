@@ -11,8 +11,6 @@ import plotly.graph_objects as go
 import streamlit as st
 import yfinance as yf
 
-from MarketMind.config.configuration import ConfigurationManager
-
 warnings.filterwarnings("ignore")
 
 # Add the src directory to the Python path
@@ -257,12 +255,6 @@ def convert_period_to_days(period: str) -> int:
         return int(period[:-1])
     elif period.endswith("y"):
         return int(period[:-1]) * 365
-    elif period == "6mo":
-        return 180
-    elif period == "3mo":
-        return 90
-    elif period == "1mo":
-        return 30
     else:
         return 180  # Default
 
@@ -541,8 +533,6 @@ def main():
     data_period = st.sidebar.selectbox(
         "Historical data period:",
         [
-            str(ConfigurationManager().get_model_training_config().window_size + 50)
-            + "d",
             "180d",
             "1y",
             "2y",

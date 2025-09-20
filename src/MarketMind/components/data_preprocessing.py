@@ -46,7 +46,7 @@ class DataPreprocessing:
         # Volume z-score
         vol_mean = df["Volume"].rolling(self.config.volume_window).mean()
         vol_std = df["Volume"].rolling(self.config.volume_window).std()
-        df["volume_zscore"] = (df["Volume"] - vol_mean) / (vol_std + 1e-9)
+        df["volume_zscore"] = (df["Volume"] - vol_mean) / (vol_std)
 
         return df
 
@@ -69,7 +69,7 @@ class DataPreprocessing:
         # Handle missing values and set business day frequency
         logger.info("Handling missing values and reindexing to business days...")
         df = df.asfreq("B")
-        df = df.ffill().bfill()
+        df = df.ffill()
 
         # Create features
         df = self._create_features(df)
