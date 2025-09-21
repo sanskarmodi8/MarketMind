@@ -224,12 +224,12 @@ class ModelTraining:
 
         logger.info("Configuring PPO model...")
         policy_kwargs = dict(net_arch=self.config.net_arch, activation_fn=torch.nn.ReLU)
-        lr_schedule = lambda p: self.config.initial_lr * p
 
+ 
         model = PPO(
             policy="MlpPolicy",
             env=vec_env,
-            learning_rate=lr_schedule,
+            learning_rate=self.config.initial_lr,
             n_steps=self.config.n_steps,
             batch_size=self.config.batch_size,
             n_epochs=self.config.n_epochs,
