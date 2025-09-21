@@ -9,7 +9,7 @@ stages:
       size: 1183
     - path: src/MarketMind/components/data_ingestion.py
       hash: md5
-      md5: b427a7e1091d2eb91af38d05ea0b757e
+      md5: 34c1a34c1f87a0a33751209b1a9145db
       size: 1692
     - path: src/MarketMind/pipeline/stage_01_data_ingestion.py
       hash: md5
@@ -55,16 +55,16 @@ stages:
     deps:
     - path: artifacts/data_preprocessing/preprocessed_data/train.csv
       hash: md5
-      md5: bd239d581652492670a93dfce21bf3c7
-      size: 380608
+      md5: 7e4f3922a1bf9cf19b37b585c68437bf
+      size: 355533
     - path: config/config.yaml
       hash: md5
       md5: bf8954f8db581a9918fce733624395f6
       size: 1183
     - path: src/MarketMind/components/model_training.py
       hash: md5
-      md5: 4a2c45fd5b0ea1ed8f3490a105b6d253
-      size: 8664
+      md5: ee7b9351164ec1b56bbf6e589fd86afc
+      size: 8665
     - path: src/MarketMind/pipeline/stage_03_model_training.py
       hash: md5
       md5: b78680009e44da3107fdd109728f25c5
@@ -72,51 +72,52 @@ stages:
     params:
       params.yaml:
         model_training.batch_size: 128
-        model_training.ent_coef: 0.01
+        model_training.ent_coef: 0.05
         model_training.eval_freq: 5000
-        model_training.gamma: 0.999
+        model_training.gamma: 0.995
         model_training.initial_balance: 1.0
         model_training.initial_lr: 0.0003
-        model_training.n_epochs: 15
+        model_training.n_epochs: 20
         model_training.n_steps: 4096
         model_training.net_arch:
         - 256
         - 256
+        - 128
         model_training.reward_scaling: 1.0
-        model_training.total_timesteps: 10000000
+        model_training.total_timesteps: 20000000
         model_training.transaction_cost: 0.001
-        model_training.turnover_penalty: 0.0005
+        model_training.turnover_penalty: 0.001
         model_training.window_size: 100
     outs:
     - path: artifacts/model_training/model/
       hash: md5
-      md5: c24248b3b98c7a6ba2a095a1692fc0e7.dir
-      size: 6145935
+      md5: b10eda2be1eb0cd5a5a83a5d3cb8c292.dir
+      size: 7109469
       nfiles: 2
     - path: artifacts/model_training/tb_logs/
       hash: md5
-      md5: be5eaf56b46308437422826c6614402d.dir
-      size: 1646374
+      md5: e1582a0bf1ddfe4b69aecb12832e2ab7.dir
+      size: 3298595
       nfiles: 1
     - path: artifacts/model_training/vec_normalize.pkl
       hash: md5
-      md5: c8de51e2098abb8d826242cbba134484
+      md5: f9c11cbffd8ac9a5d88634b5720f3065
       size: 22362
   model_evaluation:
     cmd: python src/MarketMind/pipeline/stage_04_model_evaluation.py
     deps:
     - path: artifacts/data_preprocessing/preprocessed_data/test.csv
       hash: md5
-      md5: 4c2b61255c300d993bcd745303456d86
-      size: 91893
+      md5: 21cd966f6c8af3557d526e3e3fe2f14f
+      size: 86189
     - path: artifacts/model_training/model/
       hash: md5
-      md5: cdf6840dc921856119704858af2e6a48.dir
-      size: 6168399
-      nfiles: 3
+      md5: b10eda2be1eb0cd5a5a83a5d3cb8c292.dir
+      size: 7109469
+      nfiles: 2
     - path: artifacts/model_training/vec_normalize.pkl
       hash: md5
-      md5: c8de51e2098abb8d826242cbba134484
+      md5: f9c11cbffd8ac9a5d88634b5720f3065
       size: 22362
     - path: config/config.yaml
       hash: md5
@@ -124,8 +125,8 @@ stages:
       size: 1183
     - path: src/MarketMind/components/model_evaluation.py
       hash: md5
-      md5: 43558e9087611d3bd40b709daebdc4e2
-      size: 21532
+      md5: fce0c80e003ad11491e8dbb34d6634e1
+      size: 16915
     - path: src/MarketMind/pipeline/stage_04_model_evaluation.py
       hash: md5
       md5: 1a6929fa72c62f85a448093d03592b27
@@ -135,16 +136,16 @@ stages:
         model_training.initial_balance: 1.0
         model_training.reward_scaling: 1.0
         model_training.transaction_cost: 0.001
-        model_training.turnover_penalty: 0.0005
+        model_training.turnover_penalty: 0.001
         model_training.window_size: 100
     outs:
     - path: artifacts/model_evaluation/plots/
       hash: md5
-      md5: ce37446dd162fcaa144f98217e0a30e4.dir
-      size: 224922
+      md5: 24558bf9c76b05f5951c6b5368bb13f0.dir
+      size: 228340
       nfiles: 4
     - path: artifacts/model_evaluation/report/
       hash: md5
-      md5: 97cad83d3cfd39535c6766a79cce46e8.dir
-      size: 325
+      md5: 1fbf4e0081ed8b930539ae2ab03bf717.dir
+      size: 328
       nfiles: 2

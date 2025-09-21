@@ -33,7 +33,6 @@ class ModelTrainingConfig:
     preprocessed_train_data_path: Path
     model_dir: Path
     tb_log_dir: Path
-    normalized_vec_env_path: Path
     window_size: 100
     transaction_cost: float
     initial_balance: float

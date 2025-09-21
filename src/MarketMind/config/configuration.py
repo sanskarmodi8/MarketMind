@@ -58,7 +58,6 @@ class ConfigurationManager:
             preprocessed_train_data_path=config.preprocessed_train_data_path,
             model_dir=config.model_dir,
             tb_log_dir=config.tb_log_dir,
-            normalized_vec_env_path=config.normalized_vec_env_path,
             window_size=params.window_size,
             transaction_cost=params.transaction_cost,
             initial_balance=params.initial_balance,
