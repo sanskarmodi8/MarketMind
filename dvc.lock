@@ -71,7 +71,7 @@ stages:
       size: 821
     params:
       params.yaml:
-        model_training.batch_size: 64
+        model_training.batch_size: 128
         model_training.ent_coef: 0.01
         model_training.eval_freq: 5000
         model_training.gamma: 0.995
@@ -91,12 +91,12 @@ stages:
     outs:
     - path: artifacts/model_training/model/
       hash: md5
-      md5: e0555d6ff9322e1e0181b94d2c4f87d6.dir
-      size: 6848051
+      md5: 56db9a572b2a678d8767969460e4ab43.dir
+      size: 6848052
       nfiles: 3
     - path: artifacts/model_training/tb_logs/
       hash: md5
-      md5: 3c7317155cf3fcf9ca9acfa584a6c253.dir
+      md5: 3ed86f0383eb797bb702128d9dafe69e.dir
       size: 3792
       nfiles: 1
   model_evaluation:
@@ -108,8 +108,8 @@ stages:
       size: 86189
     - path: artifacts/model_training/model/
       hash: md5
-      md5: e0555d6ff9322e1e0181b94d2c4f87d6.dir
-      size: 6848051
+      md5: 56db9a572b2a678d8767969460e4ab43.dir
+      size: 6848052
       nfiles: 3
     - path: config/config.yaml
       hash: md5
@@ -133,11 +133,11 @@ stages:
     outs:
     - path: artifacts/model_evaluation/plots/
       hash: md5
-      md5: 0b643080fe0d1ebfd1a5cdc4b581c889.dir
-      size: 212237
+      md5: e4a09e6c16f2be12b2abaafd772fe2bb.dir
+      size: 209094
       nfiles: 4
     - path: artifacts/model_evaluation/report/
       hash: md5
-      md5: 458e6dd1c8eadd60c2ede6a3b2d3eea1.dir
-      size: 326
+      md5: 1c322899d05c7ef7d8042c87955e5f06.dir
+      size: 322
       nfiles: 2

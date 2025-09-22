@@ -21,7 +21,7 @@ model_training:
   net_arch: [256, 256, 128]
   initial_lr: 0.0001
   n_steps: 2048
-  batch_size: 64
+  batch_size: 128
   n_epochs: 15
   gamma: 0.995
   ent_coef: 0.01
