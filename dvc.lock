@@ -91,12 +91,12 @@ stages:
     outs:
     - path: artifacts/model_training/model/
       hash: md5
-      md5: 56db9a572b2a678d8767969460e4ab43.dir
+      md5: 37725cf9bb1db93a4feb716d361a9259.dir
       size: 6848052
       nfiles: 3
     - path: artifacts/model_training/tb_logs/
       hash: md5
-      md5: 3ed86f0383eb797bb702128d9dafe69e.dir
+      md5: 47bf208f91bd1f77acfb498ec88eb057.dir
       size: 3792
       nfiles: 1
   model_evaluation:
@@ -108,7 +108,7 @@ stages:
       size: 86189
     - path: artifacts/model_training/model/
       hash: md5
-      md5: 56db9a572b2a678d8767969460e4ab43.dir
+      md5: 37725cf9bb1db93a4feb716d361a9259.dir
       size: 6848052
       nfiles: 3
     - path: config/config.yaml
