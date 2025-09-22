@@ -17,13 +17,13 @@ model_training:
   transaction_cost: 0.001
   initial_balance: 1.0
   reward_scaling: 1.0
-  turnover_penalty: 0.0005
-  net_arch: [256, 256]
-  initial_lr: 0.00015
+  turnover_penalty: 0.005
+  net_arch: [256, 256, 128]
+  initial_lr: 0.0001
   n_steps: 2048
   batch_size: 64
   n_epochs: 15
   gamma: 0.995
   ent_coef: 0.01
   eval_freq: 5000
-  total_timesteps: 50_000
+  total_timesteps: 1_00_000

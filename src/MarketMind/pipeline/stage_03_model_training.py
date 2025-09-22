@@ -15,6 +15,7 @@ class ModelTrainingPipeline:
         self.model_training = ModelTraining(config=self.config)
 
     def run(self):
+        
         self.model_training.run()
 
 
